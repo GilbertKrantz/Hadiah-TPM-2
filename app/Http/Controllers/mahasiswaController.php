@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
+use App\Models\Major;
 use Illuminate\Http\Request;
 
 class mahasiswaController extends Controller
@@ -26,7 +27,10 @@ class mahasiswaController extends Controller
      */
     public function create()
     {
-        return view('createMahasiswa');
+
+        $majors = Major::all();
+
+        return view('createMahasiswa', compact('majors'));
     }
 
     /**
@@ -37,10 +41,17 @@ class mahasiswaController extends Controller
      */
     public function store(Request $request)
     {
+
+        $extension = $request->file('image')->getClientOriginalExtension();
+        $filename = $request->Name . '_' . $request->NIM . '.' . $extension;
+        $request->file('image')->storeAs('/public/Flazz/', $filename);
+
         Mahasiswa::create([
             'Name' => $request->Name,
             'NIM' => $request->NIM,
-            'GPA' => $request->GPA
+            'GPA' => $request->GPA,
+            'image' => $filename,
+            'major_id' => $request->Major
         ]);
 
         return redirect('/welcome');
@@ -67,7 +78,9 @@ class mahasiswaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $mahasiswa = Mahasiswa::findOrFail($id);
+
+        return view('editMahasiswa', compact('mahasiswa'));
     }
 
     /**
@@ -79,7 +92,20 @@ class mahasiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $extension = $request->file('image')->getClientOriginalExtension();
+        $filename = $request->Name . '_' . $request->NIM . '.' . $extension;
+        $request->file('image')->storeAs('/public/Flazz/', $filename);
+
+        Mahasiswa::findOrFail($id)->update([
+            'Name' => $request->Name,
+            'NIM' => $request->NIM,
+            'GPA' => $request->GPA,
+            'image' => $filename,
+            'major_id' => $request->Major
+        ]);
+
+        return redirect('/welcome');
     }
 
     /**
@@ -88,8 +114,10 @@ class mahasiswaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        Mahasiswa::destroy($id);
+
+        return redirect('/welcome');
     }
 }

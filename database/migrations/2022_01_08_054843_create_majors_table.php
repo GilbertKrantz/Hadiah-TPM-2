@@ -13,14 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mahasiswas', function (Blueprint $table) {
+        Schema::create('majors', function (Blueprint $table) {
             $table->id();
-            $table->string('Name');
-            $table->string('NIM');
-            $table->integer('GPA');
-            $table->string('image');
-            $table->unsignedBigInteger('major_id');
-            $table->foreign('major_id')->references('id')->on('majors');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mahasiswas');
+        Schema::dropIfExists('majors');
     }
 };
